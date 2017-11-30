@@ -55,7 +55,7 @@ function colorLightenDarken(mode, color, value) {
   return mixed
 }
 function readScss(settings) {
-  var data = _.filter(fs.readFileSync(settings.src, 'utf8').split('\n'), item => _.startsWith(item, settings.indicator));
+  var data = _.filter(fs.readFileSync(settings.src, 'utf8').split('\n'), item => _.startsWith(item, '$'));
   return _.map(data, (item) => {
       const x = item.split(':');
     return {

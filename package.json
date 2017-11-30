@@ -1,13 +1,23 @@
 {
   "name": "patternlab-scssvariables",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "Convert SCSS (or SASS) files to patternlab readable YAML files.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "keywords": [
+    "Patternlab",
+    "Components",
+    "SCSS-to-Yaml",
+    "Fractal"
+  ],
+  "author": "Stef Spakman <mail@stefspakman.com>",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stefspakman/drupal-critical.git"
+  },
   "dependencies": {
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.4"
