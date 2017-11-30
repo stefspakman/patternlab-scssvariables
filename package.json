@@ -16,7 +16,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stefspakman/drupal-critical.git"
+    "url": "https://github.com/stefspakman/patternlab-scssvariables.git"
   },
   "dependencies": {
     "chalk": "^2.3.0",

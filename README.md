@@ -2,6 +2,8 @@
 
 Convert SCSS (or SASS) files to patternlab readable YAML files. The default mode will just include all variable - value pairs into a Yaml file. The color mode supports Lighten, Darken, Tint and Shade as it converts these values to hex so patternlab can display them.
 
+Referencing variables inside variables is supported, as long as this variable is in the same file. combining variables from multiple files is not supported.
+
 
 ## Install
 
