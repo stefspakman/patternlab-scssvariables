@@ -1,7 +1,17 @@
 $red: #BADA66;
 $blue: #0000ff;
 
+$test: $blue;
+$test-2: $green;
+
 $light: tint(#BADA55, 42%);
 $dark: shade(#663399, 42%);;
 
 $lightCopy: tint($red, 42%);
+$lightCopy2: tint($green, 42%);
+
+$colorGreen: #3cb878;
+$lighten: lighten($colorGreen, 15%);
+$lighten2: lighten($colorGreen, 30%);
+$darken: darken($colorGreen, 15%);
+$darken2: darken($colorGreen, 30%);

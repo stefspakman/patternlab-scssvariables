@@ -1,6 +1,6 @@
 # Patternlab: SCSS Variables [![NPM version][npm-image]][npm-url]
 
-Convert SCSS (or SASS) files to patternlab readable YAML files. The default mode will just include all variable - value pairs into a Yaml file. The color mode converts Tint and Shade values to hex values so patternlab can display them.
+Convert SCSS (or SASS) files to patternlab readable YAML files. The default mode will just include all variable - value pairs into a Yaml file. The color mode supports Lighten, Darken, Tint and Shade as it converts these values to hex so patternlab can display them.
 
 
 ## Install
@@ -66,7 +66,10 @@ items:
 | description      | `string`           | Optional description to include in the yaml |  
 
 ## Changelog
- **v0.0.1 - 2017-11-30** 
+**v1.1.0 - 2017-11-30** 
+ - Added Support for Lighten and Darken
+ 
+ **v1.0.0 - 2017-11-30** 
  - initial release
 
 

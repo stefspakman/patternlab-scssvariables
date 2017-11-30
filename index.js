@@ -1,6 +1,9 @@
 var
   _ = require('lodash'),
   fs = require('fs'),
+  chalk = require('chalk'),
+  tinycolor = require("tinycolor2"),
+  log = require('fancy-log'),
   yaml = require('js-yaml');
 
 function defaultMode(settings) {
@@ -15,37 +18,71 @@ function colorMode(settings) {
 module.exports = defaultMode;
 module.exports.color = colorMode;
 
+var allValues;
 function getValues(settings, done) {
   var values = readScss(settings);
-  var result =  values;
-  if (settings.mode === 'colors') {
-    result = colorValues(values)
-  }
+  allValues = values;
+  var result = processVariables(settings.mode , values);
   toYaml(settings, result);
 }
 
-function colorLightenDarken(mode, color, value) {
-  color = removeCharacter(color, '#');
-  var mix = function (color_1, color_2, weight) {
-    function d2h(d) {
-      return d.toString(16);
-    }
-    function h2d(h) {
-      return parseInt(h, 16);
-    }
-    weight = (typeof(weight) !== 'undefined') ? weight : 50;
-    var color = "#";
-    for (var i = 0; i <= 5; i += 2) {
-      var v1 = h2d(color_1.substr(i, 2)),
-        v2 = h2d(color_2.substr(i, 2)),
-        val = d2h(Math.floor(v2 + (v1 - v2) * (weight / 100.0)));
-      while (val.length < 2) {
-        val = '0' + val;
+function processVariables(mode, values){
+  result = [];
+  values.forEach(function(item) {
+    var value = item.value;
+    if (mode === 'colors') {
+      value = processColor(item.value);
+      if (item.value.includes('tint(') || item.value.includes('shade(') || item.value.includes('lighten(') || item.value.includes('darken(')) {
+        value = processTintShade(item.value);
+      } else if ((item.value).includes('$')){
+        value = getRefference(item.value)
       }
-      color += val;
+    } else if (_.startsWith(item.value, '$')){
+      value = getRefference(item.value)
     }
-    return color;
-  };
+    if (value !== ''){
+      result.push({
+        name: item.name,
+        value: value
+      });
+    }
+  });
+  return result;
+}
+
+function getRefference(value) {
+  var result = '';
+  try {
+    result = ((_.find(allValues, { 'name':  value})).value);
+  } catch(err) {
+    log.error(chalk.yellow('Could not find: ' + value))
+  }
+  return result
+}
+
+function mix(color_1, color_2, weight) {
+  function d2h(d) {
+    return d.toString(16);
+  }
+  function h2d(h) {
+    return parseInt(h, 16);
+  }
+  weight = (typeof(weight) !== 'undefined') ? weight : 50;
+  var color = "#";
+  for (var i = 0; i <= 5; i += 2) {
+    var v1 = h2d(color_1.substr(i, 2)),
+      v2 = h2d(color_2.substr(i, 2)),
+      val = d2h(Math.floor(v2 + (v1 - v2) * (weight / 100.0)));
+    while (val.length < 2) {
+      val = '0' + val;
+    }
+    color += val;
+  }
+  return color;
+};
+
+function colorTintShade(mode, color, value) {
+  color = removeCharacter(color, '#');
 
   var modeColor = 'ffffff';
   if (mode !== 'tint'){
@@ -65,7 +102,7 @@ function readScss(settings) {
   });
 }
 function processColor(value) {
-  var color = ((value).replace(/(tint\(|shade\()/, ""));
+  var color = ((value).replace(/(tint\(|shade\(|lighten\(|darken\()/, ""));
   if(color.includes(',')){
     color = color.substring(0, color.indexOf(','));
   }
@@ -74,21 +111,29 @@ function processColor(value) {
 function removeCharacter(value, character) {
   return value.replace(character, '')
 }
-function processTintShade(colorValue, values) {
+function processTintShade(colorValue) {
   var value =  (colorValue.split(',').pop()).match(/\d+/)[0];
   var result;
   var color = processColor(colorValue);
   if (colorValue.includes('$')) {
     var variable = (colorValue).substring((colorValue).lastIndexOf("$"),(colorValue).lastIndexOf(","));
-    color = ((_.find(values, { 'name':  variable})).value).substring(1)
+    color = getRefference(variable);
+    if (color === ''){
+      return color
+    }
   }
   if (colorValue.includes('tint(')) {
-    result = colorLightenDarken('tint', color, value);
+    result = colorTintShade('tint', color, value);
   } else if (colorValue.includes('shade(')) {
-    result = colorLightenDarken('shade', color, value);
+    result = colorTintShade('shade', color, value);
+  } else if (colorValue.includes('lighten(')) {
+    result = tinycolor(color).lighten(value).toString();
+  } else if (colorValue.includes('darken(')) {
+    result = tinycolor(color).darken(value).toString();
   }
- return result
+  return result
 }
+
 function toYaml(settings, values) {
   var contents = {
     items: values
@@ -98,18 +143,4 @@ function toYaml(settings, values) {
     contents['meta']['description'] = settings.description;
   }
   fs.writeFileSync(settings.dest, yaml.dump(contents));
-}
-function colorValues(values) {
-  result = [];
-  values.forEach(function (item) {
-    var color = processColor(item.value);
-    if (item.value.includes('tint(') || item.value.includes('shade(')){
-      color = processTintShade(item.value, values);
-    }
-    result.push({
-      name: item.name,
-      value: color
-    });
-  });
-  return result;
 }
