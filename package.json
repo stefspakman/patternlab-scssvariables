@@ -1,6 +1,6 @@
 {
   "name": "patternlab-scssvariables",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Convert SCSS (or SASS) files to patternlab readable YAML files.",
   "main": "index.js",
   "scripts": {
