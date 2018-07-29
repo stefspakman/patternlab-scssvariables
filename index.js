@@ -4,6 +4,8 @@ var
   chalk = require('chalk'),
   tinycolor = require("tinycolor2"),
   log = require('fancy-log'),
+  RJSON = require('relaxed-json'),
+  flatten = require('flat'),
   yaml = require('js-yaml');
 
 function defaultMode(settings) {
@@ -21,15 +23,19 @@ module.exports.color = colorMode;
 var allValues;
 function getValues(settings, done) {
   var values = readScss(settings);
+
+  values = checkNested(values, settings);
+
   allValues = values;
-  var result = processVariables(settings.mode , values);
+  var result = processVariables(settings.mode , values, settings);
   toYaml(settings, result);
 }
 
-function processVariables(mode, values){
+function processVariables(mode, values, settings) {
   result = [];
   values.forEach(function(item) {
     var value = item.value;
+
     if (mode === 'colors') {
       value = processColor(item.value);
       if (item.value.includes('tint(') || item.value.includes('shade(') || item.value.includes('lighten(') || item.value.includes('darken(')) {
@@ -91,16 +97,18 @@ function colorTintShade(mode, color, value) {
   var mixed = mix((color), (modeColor), value);
   return mixed
 }
+
 function readScss(settings) {
   var data = _.filter(fs.readFileSync(settings.src, 'utf8').split('\n'), item => _.startsWith(item, '$'));
   return _.map(data, (item) => {
-      const x = item.split(':');
+    const x = item.split(':');
     return {
       name: x[0].trim(),
       value: x[1].replace(/;.*/, '').trim()
     };
   });
 }
+
 function processColor(value) {
   var color = ((value).replace(/(tint\(|shade\(|lighten\(|darken\()/, ""));
   if(color.includes(',')){
@@ -108,9 +116,11 @@ function processColor(value) {
   }
   return color
 }
+
 function removeCharacter(value, character) {
   return value.replace(character, '')
 }
+
 function processTintShade(colorValue) {
   var value =  (colorValue.split(',').pop()).match(/\d+/)[0];
   var result;
@@ -132,6 +142,35 @@ function processTintShade(colorValue) {
     result = tinycolor(color).darken(value).toString();
   }
   return result
+}
+
+function checkNested(values, settings) {
+  var output = [];
+  values.forEach(function(item) {
+    if (item.value === '(') {
+      output = _.concat(output, nestedProperties(item.name, settings));
+    } else {
+      output.push(item)
+    }
+
+  });
+  return output;
+}
+
+function nestedProperties(value, settings) {
+  var data = (fs.readFileSync(settings.src, 'utf8')).replace(/\r?\n|\r/g, "");
+  data = data.substr(data.indexOf(value), data.length);
+  data = data.substr(0, data.indexOf(';'));
+  data = flatten((JSON.parse("{" +  RJSON.transform(data.replace(/\(/g,"{").replace(/\)/g,"}").replace(/\s/g,"")) + "}")));
+
+  var output = [];
+  for (item in data) {
+    output.push({
+      name: item,
+      value: data[item]
+    });
+  }
+  return output
 }
 
 function toYaml(settings, values) {

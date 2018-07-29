@@ -10,6 +10,18 @@ $dark: shade(#663399, 42%);;
 $lightCopy: tint($red, 42%);
 $lightCopy2: tint($green, 42%);
 
+$colours: (
+    red: (
+        light: #fff2f1,
+        mid: #ff7369,
+        dark: #c90d00
+    ),
+    blue: (
+    lightest: #5e7298,
+    light: #404d69
+    )
+);
+
 $colorGreen: #3cb878;
 $lighten: lighten($colorGreen, 15%);
 $lighten2: lighten($colorGreen, 30%);

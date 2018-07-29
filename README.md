@@ -43,20 +43,42 @@ $valid-color--light: #cbf1ab;
 
 $test: tint(#BADA55, 42%);
 $test: shade(#663399, 42%);
+
+$colours: (
+    red: (
+        light: #fff2f1,
+        mid: #ff7369,
+        dark: #c90d00
+    ),
+    blue: (
+    lightest: #5e7298,
+    light: #404d69
+    )
+);
 ```
 Output:
 ```yaml
 items:
-  - name: $white
-    value: '#fff'
-  - name: $black
-    value: '#000'
-  - name: $valid-color--light
-    value: '#cbf1ab'
-  - name: $test
-    value: '#e2efb7'
-  - name: $test
-    value: '#2a1540'
+    - name: $white
+      value: '#fff'
+    - name: $black
+      value: '#000'
+    - name: $valid-color--light
+      value: '#cbf1ab'
+    - name: $test
+      value: '#e2efb7'
+    - name: $test
+      value: '#2a1540'
+    - name: $colours.red.light
+      value: '#fff2f1'
+    - name: $colours.red.mid
+      value: '#ff7369'
+    - name: $colours.red.dark
+      value: '#c90d00'
+    - name: $colours.blue.lightest
+      value: '#5e7298'
+    - name: $colours.blue.light
+      value: '#404d69'
 ```
 
 ### Options
@@ -68,10 +90,13 @@ items:
 | description      | `string`           | Optional description to include in the yaml |  
 
 ## Changelog
+**v1.2.0 - 2018-07-29** 
+ - Added Support for nested sass maps
+ 
 **v1.1.0 - 2017-11-30** 
  - Added Support for Lighten and Darken
  
- **v1.0.0 - 2017-11-30** 
+**v1.0.0 - 2017-11-30** 
  - initial release
 
 
