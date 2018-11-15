@@ -136,13 +136,19 @@ function processTintShade(colorValue) {
 
 function toYaml(settings, values) {
   let key = settings.type !== 'fractal' ? 'items' : 'context';
-  let contents = {
-    [key]: values
-  };
+  let contents;
   if ( settings.type !== 'fractal') {
-    contents['description'] = settings.description;
+    contents = {
+      "items": values,
+      "description": settings.description
+    };
   } else {
-    contents[key]['description'] = settings.description;
+    contents = {
+      "context": {
+        "items": values,
+        "description": settings.description
+      }
+    };
   }
   const filetype = settings.dest.substr(settings.dest.lastIndexOf('.'), settings.dest.length);
   const data = filetype.match(/\.y(a)?ml/g) ? yaml.dump(contents) : JSON.stringify(contents, null, 2)
