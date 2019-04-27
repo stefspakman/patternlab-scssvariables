@@ -1,0 +1,35 @@
+items:
+  - name: $red
+    value: '#BADA66'
+  - name: $blue
+    value: '#0000ff'
+  - name: $test
+    value: '#0000ff'
+  - name: $light
+    value: 'tint(#BADA55, 42%)'
+  - name: $dark
+    value: 'shade(#663399, 42%)'
+  - name: $lightCopy
+    value: 'tint($red, 42%)'
+  - name: $lightCopy2
+    value: 'tint($green, 42%)'
+  - name: $colours.red.light
+    value: '#fff2f1'
+  - name: $colours.red.mid
+    value: '#ff7369'
+  - name: $colours.red.dark
+    value: '#c90d00'
+  - name: $colours.blue.lightest
+    value: '#5e7298'
+  - name: $colours.blue.light
+    value: '#404d69'
+  - name: $colorGreen
+    value: '#3cb878'
+  - name: $lighten
+    value: 'lighten($colorGreen, 15%)'
+  - name: $lighten2
+    value: 'lighten($colorGreen, 30%)'
+  - name: $darken
+    value: 'darken($colorGreen, 15%)'
+  - name: $darken2
+    value: 'darken($colorGreen, 30%)'

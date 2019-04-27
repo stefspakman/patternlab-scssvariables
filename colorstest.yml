@@ -1,0 +1,35 @@
+items:
+  - name: $red
+    value: '#BADA66'
+  - name: $blue
+    value: '#0000ff'
+  - name: $test
+    value: '#0000ff'
+  - name: $light
+    value: '#e2efb7'
+  - name: $dark
+    value: '#2a1540'
+  - name: $lightCopy
+    value: '#e2efbe'
+  - name: $colours.red.light
+    value: '#fff2f1'
+  - name: $colours.red.mid
+    value: '#ff7369'
+  - name: $colours.red.dark
+    value: '#c90d00'
+  - name: $colours.blue.lightest
+    value: '#5e7298'
+  - name: $colours.blue.light
+    value: '#404d69'
+  - name: $colorGreen
+    value: '#3cb878'
+  - name: $lighten
+    value: '#70d09f'
+  - name: $lighten2
+    value: '#aae3c6'
+  - name: $darken
+    value: '#297e52'
+  - name: $darken2
+    value: '#16452d'
+meta:
+  description: Hallo dit is een test
