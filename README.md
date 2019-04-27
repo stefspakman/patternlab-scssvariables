@@ -1,6 +1,6 @@
-# Patternlab: SCSS Variables [![NPM version][npm-image]][npm-url]
+# Component: SCSS Variables [![NPM version][npm-image]][npm-url]
 
-Convert SCSS (or SASS) files to patternlab readable YAML files. The default mode will just include all variable - value pairs into a Yaml file. The color mode supports Lighten, Darken, Tint and Shade as it converts these values to hex so patternlab can display them.
+Convert SCSS (or SASS) files to YAML or JSON files which can be read by your component guide (eg Pattern-lab, Fractal). The default mode will just include all variable - value pairs into a Yaml file. The color mode supports Lighten, Darken, Tint and Shade as it converts these values to hex so patternlab can display them.
 
 Referencing variables inside variables is supported, as long as this variable is in the same file. combining variables from multiple files is not supported.
 
@@ -35,6 +35,18 @@ Colors Specific usage:
 
   scssVariables.color(settings);
 ```
+
+Fractal Usage (will output the items under 'context' instead of 'items'):
+```js
+ var settings = {
+    "src": "icons/_variables.scss",
+    "dest": "icons-variables.json",
+    "type": "fractal"
+  };
+
+  scssVariables(settings);
+```
+
 Input:
 ```scss
 $white: #fff;
@@ -86,10 +98,15 @@ items:
 | Name             | Type               | Description   |
 | ---------------- | ------------------ | ------------- |
 | src              | `string`           | A string containing a path to the input file.
-| dest             | `string`           | Yaml file destination |  
-| description      | `string`           | Optional description to include in the yaml |  
+| dest             | `string`           | file destination, can be yml, yaml or json |  
+| description      | `string`           | Optional description to include in the file |  
+| type             | `string`           | set to Fractal to enable fractal support |  
 
 ## Changelog
+**v1.3.0 - 2018-11-15** 
+ - Added Support Fractal
+ - Added Support JSON files
+ 
 **v1.2.0 - 2018-07-29** 
  - Added Support for nested sass maps
  

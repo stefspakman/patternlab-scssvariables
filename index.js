@@ -4,8 +4,6 @@ var
   chalk = require('chalk'),
   tinycolor = require("tinycolor2"),
   log = require('fancy-log'),
-  RJSON = require('relaxed-json'),
-  flatten = require('flat'),
   yaml = require('js-yaml');
 
 function defaultMode(settings) {
@@ -23,19 +21,15 @@ module.exports.color = colorMode;
 var allValues;
 function getValues(settings, done) {
   var values = readScss(settings);
-
-  values = checkNested(values, settings);
-
   allValues = values;
-  var result = processVariables(settings.mode , values, settings);
+  var result = processVariables(settings.mode , values);
   toYaml(settings, result);
 }
 
-function processVariables(mode, values, settings) {
+function processVariables(mode, values){
   result = [];
   values.forEach(function(item) {
     var value = item.value;
-
     if (mode === 'colors') {
       value = processColor(item.value);
       if (item.value.includes('tint(') || item.value.includes('shade(') || item.value.includes('lighten(') || item.value.includes('darken(')) {
@@ -97,7 +91,6 @@ function colorTintShade(mode, color, value) {
   var mixed = mix((color), (modeColor), value);
   return mixed
 }
-
 function readScss(settings) {
   var data = _.filter(fs.readFileSync(settings.src, 'utf8').split('\n'), item => _.startsWith(item, '$'));
   return _.map(data, (item) => {
@@ -108,7 +101,6 @@ function readScss(settings) {
     };
   });
 }
-
 function processColor(value) {
   var color = ((value).replace(/(tint\(|shade\(|lighten\(|darken\()/, ""));
   if(color.includes(',')){
@@ -116,11 +108,9 @@ function processColor(value) {
   }
   return color
 }
-
 function removeCharacter(value, character) {
   return value.replace(character, '')
 }
-
 function processTintShade(colorValue) {
   var value =  (colorValue.split(',').pop()).match(/\d+/)[0];
   var result;
@@ -144,42 +134,23 @@ function processTintShade(colorValue) {
   return result
 }
 
-function checkNested(values, settings) {
-  var output = [];
-  values.forEach(function(item) {
-    if (item.value === '(') {
-      output = _.concat(output, nestedProperties(item.name, settings));
-    } else {
-      output.push(item)
-    }
-
-  });
-  return output;
-}
-
-function nestedProperties(value, settings) {
-  var data = (fs.readFileSync(settings.src, 'utf8')).replace(/\r?\n|\r/g, "");
-  data = data.substr(data.indexOf(value), data.length);
-  data = data.substr(0, data.indexOf(';'));
-  data = flatten((JSON.parse("{" +  RJSON.transform(data.replace(/\(/g,"{").replace(/\)/g,"}").replace(/\s/g,"")) + "}")));
-
-  var output = [];
-  for (item in data) {
-    output.push({
-      name: item,
-      value: data[item]
-    });
-  }
-  return output
-}
-
 function toYaml(settings, values) {
-  var contents = {
-    items: values
-  };
-  if (settings.description){
-    contents['meta'] = {};
-    contents['meta']['description'] = settings.description;
+  let key = settings.type !== 'fractal' ? 'items' : 'context';
+  let contents;
+  if ( settings.type !== 'fractal') {
+    contents = {
+      "items": values,
+      "description": settings.description
+    };
+  } else {
+    contents = {
+      "context": {
+        "items": values,
+        "description": settings.description
+      }
+    };
   }
-  fs.writeFileSync(settings.dest, yaml.dump(contents));
+  const filetype = settings.dest.substr(settings.dest.lastIndexOf('.'), settings.dest.length);
+  const data = filetype.match(/\.y(a)?ml/g) ? yaml.dump(contents) : JSON.stringify(contents, null, 2)
+  fs.writeFileSync(settings.dest, data);
 }
